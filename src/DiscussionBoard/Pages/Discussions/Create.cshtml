@@ -1,0 +1,6 @@
+@page
+@model DiscussionBoard.Pages.Discussions.CreateModel
+@{ ViewData["Title"] = "Start a discussion"; }
+<h1>Start a discussion in @Model.Forum.Name</h1>
+<form method="post" asp-route-forumId="@Model.Forum.Id"><div asp-validation-summary="All" class="text-danger"></div><label asp-for="Input.Title"></label><input asp-for="Input.Title" class="form-control"/><label asp-for="Input.Content"></label><textarea asp-for="Input.Content" class="form-control"></textarea><button class="btn btn-primary mt-3">Create Discussion</button></form>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

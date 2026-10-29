@@ -39,6 +39,9 @@ namespace DiscussionBoard
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddRazorPages();
+            builder.Services.AddScoped<ForumService>();
+            builder.Services.AddScoped<DiscussionThreadService>();
+            builder.Services.AddScoped<PostService>();
 
             builder.Services.AddSingleton<ILogReader, JsonLogReader>();
 
@@ -48,6 +51,7 @@ namespace DiscussionBoard
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();
+                DevelopmentSeedService.SeedAsync(app.Services).GetAwaiter().GetResult();
             }
             else
             {

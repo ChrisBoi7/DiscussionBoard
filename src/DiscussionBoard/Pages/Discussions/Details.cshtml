@@ -1,0 +1,10 @@
+@page "/Discussion/{threadId:int}"
+@model DiscussionBoard.Pages.Discussions.DetailsModel
+@using System.Security.Claims
+@{ ViewData["Title"] = Model.Thread.Title; }
+<a asp-page="/Forums/Details" asp-route-id="@Model.Thread.ForumId">Back to @Model.Thread.Forum.Name</a>
+<h1>@Model.Thread.Title</h1><p>@Model.Thread.Content</p><p class="text-muted">@Model.Thread.ApplicationUser?.UserName — @Model.Thread.CreatedAt.ToLocalTime().ToString("g")</p>
+@if (User.FindFirstValue(ClaimTypes.NameIdentifier) == Model.Thread.ApplicationUserId) { <a asp-page="/Discussions/Edit" asp-route-threadId="@Model.Thread.Id">Edit</a> }
+<hr/><h2>Replies</h2><div asp-validation-summary="All" class="text-danger"></div>
+@if (User.Identity?.IsAuthenticated == true) { <form method="post" asp-page-handler="Reply" asp-route-threadId="@Model.Thread.Id"><label for="reply-thread">Reply</label><textarea id="reply-thread" name="Input.Content" class="form-control" required maxlength="10000"></textarea><button class="btn btn-primary mt-2 mb-3">Post Reply</button></form> } else { <p>Login to reply.</p> }
+@foreach (var node in Model.PostTree) { <partial name="/Pages/Discussions/_PostTree.cshtml" model="node" /> }
