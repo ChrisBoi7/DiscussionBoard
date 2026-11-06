@@ -1,0 +1,5 @@
+@model DiscussionBoard.Models.ApplicationUser
+@using DiscussionBoard.Services
+@{ var name = string.IsNullOrWhiteSpace(Model?.DisplayName) ? "Unconfigured User" : Model.DisplayName;
+   var avatar = string.IsNullOrWhiteSpace(Model?.DisplayName) ? AvatarCatalog.DefaultId : Model.AvatarId; }
+<img src="@AvatarCatalog.ImagePath(avatar)" alt="@name avatar" width="40" height="40" class="rounded-circle" /> <span>@name</span>

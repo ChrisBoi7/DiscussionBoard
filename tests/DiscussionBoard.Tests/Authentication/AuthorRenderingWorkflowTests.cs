@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection;
 using AngleSharp.Html.Parser;
 using DiscussionBoard.Data;
 using DiscussionBoard.Models;
@@ -62,6 +63,7 @@ public sealed class AuthorRenderingWorkflowTests
             builder.UseEnvironment("Testing");
             builder.ConfigureServices(services =>
             {
+                services.AddDataProtection().UseEphemeralDataProtectionProvider();
                 services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
                 services.RemoveAll<ApplicationDbContext>();
                 services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connection));

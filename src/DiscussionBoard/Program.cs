@@ -10,7 +10,7 @@ namespace DiscussionBoard
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task  Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +38,13 @@ namespace DiscussionBoard
                     options.SignIn.RequireConfirmedAccount = !builder.Environment.IsDevelopment())
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddRazorPages();
+            builder.Services.AddRazorPages(options =>
+            {
+                options.Conventions.AuthorizeFolder("/Forums");
+                options.Conventions.AuthorizeFolder("/Discussions");
+                options.Conventions.AuthorizePage("/MyProfile");
+            });
+            builder.Services.AddScoped<IUserProfileService, UserProfileService>();
             builder.Services.AddScoped<ForumService>();
             builder.Services.AddScoped<DiscussionThreadService>();
             builder.Services.AddScoped<PostService>();

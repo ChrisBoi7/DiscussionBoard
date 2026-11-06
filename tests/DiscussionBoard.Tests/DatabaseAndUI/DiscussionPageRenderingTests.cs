@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Authentication;
+using DiscussionBoard.Tests.Infrastructure;
+using Microsoft.AspNetCore.DataProtection;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using DiscussionBoard.Data;
@@ -120,8 +123,14 @@ namespace DiscussionBoard.Tests.DatabaseAndUI
                 builder.UseEnvironment("Testing");
                 builder.ConfigureServices(services =>
                 {
+                services.AddDataProtection().UseEphemeralDataProtectionProvider();
                     services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
                     services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connection));
+                    services.AddAuthentication(options =>
+                    {
+                        options.DefaultAuthenticateScheme = TestAuthenticationHandler.SchemeName;
+                        options.DefaultChallengeScheme = TestAuthenticationHandler.SchemeName;
+                    }).AddScheme<AuthenticationSchemeOptions, TestAuthenticationHandler>(TestAuthenticationHandler.SchemeName, _ => { });
                 });
             }
         }

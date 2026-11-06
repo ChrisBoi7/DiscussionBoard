@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using DiscussionBoard.Data;
@@ -45,6 +46,7 @@ internal sealed class AuthenticationWebTestFactory : WebApplicationFactory<Discu
         builder.UseEnvironment("Development");
         builder.ConfigureServices(services =>
         {
+            services.AddDataProtection().UseEphemeralDataProtectionProvider();
             if (_enableTestUser)
             {
                 services.AddAuthentication()
@@ -65,3 +67,4 @@ internal sealed class AuthenticationWebTestFactory : WebApplicationFactory<Discu
         if (disposing) _connection.Dispose();
     }
 }
+
