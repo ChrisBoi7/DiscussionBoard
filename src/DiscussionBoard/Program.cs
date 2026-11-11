@@ -86,15 +86,6 @@ namespace DiscussionBoard
             app.MapRazorPages()
                 .WithStaticAssets();
 
-            // Temporary one-time setup; remove this block after bootstrapping the first admin.
-            if (args.Contains("--bootstrap-admin", StringComparer.Ordinal))
-            {
-                if (!app.Environment.IsDevelopment())
-                    throw new InvalidOperationException("This bootstrap tool is Development-only.");
-                await AdminBootstrapper.BootstrapAsync(app.Services, app.Configuration["BootstrapAdmin:Email"]);
-                return;
-            }
-
             app.Run();
         }
     }
