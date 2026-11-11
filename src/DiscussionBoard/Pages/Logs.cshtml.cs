@@ -1,4 +1,6 @@
 ﻿using DiscussionBoard.Models;
+using DiscussionBoard.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using DiscussionBoard.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -8,6 +10,7 @@ namespace DiscussionBoard.Pages
     /// <summary>
     /// Logs PageModel for displaying application logs.
     /// </summary>
+    [Authorize(Roles = ApplicationRoles.Admin)]
     public class Logs : PageModel
     {
         private readonly ILogger<Logs> _logger;

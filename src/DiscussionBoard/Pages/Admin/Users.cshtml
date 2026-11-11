@@ -1,0 +1,20 @@
+@page
+@model DiscussionBoard.Pages.Admin.UsersModel
+@using DiscussionBoard.Authorization
+@{ ViewData["Title"] = "Manage Users"; }
+<h1>Manage Users</h1>
+@if (!string.IsNullOrEmpty(Model.StatusMessage)) { <p role="status" class="alert alert-info">@Model.StatusMessage</p> }
+<form method="post"><div asp-validation-summary="All" class="text-danger"></div>
+ <label asp-for="SelectedUserId" class="form-label">User</label>
+ <select asp-for="SelectedUserId" class="form-select"><option value="">-- Select User --</option>
+ @foreach (var user in Model.AvailableUsers) { <option value="@user.Id">@user.DisplayName (@user.Email)</option> }
+ </select><button type="submit" class="btn btn-primary mt-2">Select user</button>
+</form>
+@if (Model.SelectedUser != null) {
+ <section class="mt-4"><h2>@Model.SelectedUser.DisplayName</h2><p>@Model.SelectedUser.Email</p>
+ <form method="post" asp-page-handler="UpdateRole">
+  <input type="hidden" asp-for="SelectedUserId" /><input type="hidden" name="Role" value="@ApplicationRoles.Admin" />
+  @if (Model.IsAdmin) { <button class="btn btn-warning" name="Action" value="remove">Remove Admin</button> }
+  else { <button class="btn btn-primary" name="Action" value="add">Add Admin</button> }
+ </form></section>
+}

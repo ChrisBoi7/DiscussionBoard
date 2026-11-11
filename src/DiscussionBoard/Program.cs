@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using DiscussionBoard.Data;
+using DiscussionBoard.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using DiscussionBoard.Models;
 using DiscussionBoard.Services;
 using Serilog;
@@ -36,8 +38,13 @@ namespace DiscussionBoard
 
             builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
                     options.SignIn.RequireConfirmedAccount = !builder.Environment.IsDevelopment())
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            builder.Services.AddAuthorization(options => options.AddPolicy(ApplicationAuthorizationPolicies.IsOwnerOrAdmin,
+                policy => policy.Requirements.Add(new IsOwnerOrAdminRequirement())));
+            builder.Services.AddSingleton<IAuthorizationHandler, IsOwnerOrAdminHandler>();
+            builder.Services.AddScoped<IApplicationAuthorizationService, ApplicationAuthorizationService>();
             builder.Services.AddRazorPages(options =>
             {
                 options.Conventions.AuthorizeFolder("/Forums");
@@ -78,6 +85,15 @@ namespace DiscussionBoard
 
             app.MapRazorPages()
                 .WithStaticAssets();
+
+            // Temporary one-time setup; remove this block after bootstrapping the first admin.
+            if (args.Contains("--bootstrap-admin", StringComparer.Ordinal))
+            {
+                if (!app.Environment.IsDevelopment())
+                    throw new InvalidOperationException("This bootstrap tool is Development-only.");
+                await AdminBootstrapper.BootstrapAsync(app.Services, app.Configuration["BootstrapAdmin:Email"]);
+                return;
+            }
 
             app.Run();
         }
