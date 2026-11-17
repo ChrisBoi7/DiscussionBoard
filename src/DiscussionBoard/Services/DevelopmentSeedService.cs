@@ -34,7 +34,7 @@ public static class DevelopmentSeedService
         var thread = new DiscussionThread
         {
             ForumId = forum.Id, Title = "Welcome to DiscussionBoard",
-            Content = "Introduce yourself and share something you're looking forward to learning.",
+            Content = "Introduce yourself and share something",
             ApplicationUserId = demo.Id
         };
         db.DiscussionThreads.Add(thread);
@@ -47,7 +47,7 @@ public static class DevelopmentSeedService
         var separate = new Post
         {
             DiscussionThreadId = thread.Id, ApplicationUserId = demo.Id,
-            Title = "Getting started", Content = "What are you hoping to learn in this course?"
+            Title = "Getting started", Content = "What are you hoping to learn?"
         };
         db.Posts.AddRange(welcome, separate);
         await db.SaveChangesAsync();
@@ -56,7 +56,7 @@ public static class DevelopmentSeedService
         {
             DiscussionThreadId = thread.Id, ApplicationUserId = demo.Id,
             ParentPostId = welcome.Id, Title = "First reply",
-            Content = "Replies appear beneath the post they respond to."
+            Content = "Replies appear beneath the post."
         };
         db.Posts.Add(reply);
         await db.SaveChangesAsync();

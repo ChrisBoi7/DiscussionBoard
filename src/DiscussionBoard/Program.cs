@@ -60,6 +60,17 @@ namespace DiscussionBoard
 
             var app = builder.Build();
 
+            // Prevent the application from being embedded in another site's frame.
+            app.Use(async (context, next) =>
+            {
+                context.Response.OnStarting(() =>
+                {
+                    context.Response.Headers.XFrameOptions = "DENY";
+                    return Task.CompletedTask;
+                });
+                await next();
+            });
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

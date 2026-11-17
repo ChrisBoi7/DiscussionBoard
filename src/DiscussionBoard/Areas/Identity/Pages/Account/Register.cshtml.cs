@@ -33,15 +33,15 @@ public class RegisterModel(UserManager<ApplicationUser> users, SignInManager<App
         Input.Profile.DisplayName = (Input.Profile.DisplayName ?? "").Trim();
         ModelState.Remove("Input.Profile.DisplayName");
         if (Input.Profile.DisplayName.Length is < 2 or > 60)
-            ModelState.AddModelError("Input.Profile.DisplayName", "Display name must be between 2 and 60 characters.");
+            ModelState.AddModelError("Input.Profile.DisplayName", "Display name must be 2 or more characters.");
         else if (!await profiles.IsDisplayNameAvailableAsync(Input.Profile.DisplayName))
-            ModelState.AddModelError("Input.Profile.DisplayName", "This display name is already in use.");
+            ModelState.AddModelError("Input.Profile.DisplayName", "This name is already in use.");
         if (!AvatarCatalog.IsValid(Input.Profile.AvatarId))
-            ModelState.AddModelError("Input.Profile.AvatarId", "Please select a valid avatar.");
+            ModelState.AddModelError("Input.Profile.AvatarId", "Please select an avatar.");
         if (!ModelState.IsValid) return Page();
         var user = new ApplicationUser { DisplayName = Input.Profile.DisplayName, AvatarId = Input.Profile.AvatarId };
         await store.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-        var emailStore = store as IUserEmailStore<ApplicationUser> ?? throw new NotSupportedException("Email store is required.");
+        var emailStore = store as IUserEmailStore<ApplicationUser> ?? throw new NotSupportedException("Email is required.");
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
         var result = await users.CreateAsync(user, Input.Password);
         if (!result.Succeeded)
@@ -49,7 +49,7 @@ public class RegisterModel(UserManager<ApplicationUser> users, SignInManager<App
             foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
             return Page();
         }
-        logger.LogInformation("User created a new account with password.");
+        logger.LogInformation("User created a new account / password.");
         var code = await users.GenerateEmailConfirmationTokenAsync(user);
         code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
         var callbackUrl = Url.Page("/Account/ConfirmEmail", pageHandler: null,

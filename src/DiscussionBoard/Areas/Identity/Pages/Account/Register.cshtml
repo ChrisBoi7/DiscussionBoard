@@ -2,7 +2,8 @@
 @model DiscussionBoard.Areas.Identity.Pages.Account.RegisterModel
 @using DiscussionBoard.Services
 @{ ViewData["Title"] = "Register"; }
-<h1>Register</h1><div class="row"><div class="col-md-6">
+<h1>Register</h1>
+<div class="row"><div class="col-md-6">
 <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
     <h2>Create a new account</h2><hr />
     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
