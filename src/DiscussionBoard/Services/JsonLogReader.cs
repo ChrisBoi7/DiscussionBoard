@@ -3,21 +3,19 @@ using DiscussionBoard.Models;
 
 namespace DiscussionBoard.Services
 {
-    /// <summary>
-    ///
-    /// </summary>
     public class JsonLogReader : ILogReader
     {
         private readonly string _logDirectory;
         private readonly ILogger<JsonLogReader> _logger;
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="environment"></param>
-        public JsonLogReader(IWebHostEnvironment environment, ILogger<JsonLogReader> logger)
+        public JsonLogReader(
+            IWebHostEnvironment environment,
+            ILogger<JsonLogReader> logger)
         {
-            _logDirectory = Path.Combine(environment.ContentRootPath, "Logs");
+            _logDirectory = Path.Combine(
+                environment.ContentRootPath,
+                "Logs");
+
             _logger = logger;
         }
 
@@ -28,11 +26,22 @@ namespace DiscussionBoard.Services
 
             try
             {
-                logFiles = Directory.GetFiles(_logDirectory, "*.json");
+                logFiles = Directory.GetFiles(
+                    _logDirectory,
+                    "*.json");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                // A new installation may not have a Logs folder yet.
+                return logs;
             }
             catch (IOException e)
             {
-                _logger.LogError(e, "Could not read log files from {LogDirectory}", _logDirectory);
+                _logger.LogError(
+                    e,
+                    "Could not read log files from {LogDirectory}",
+                    _logDirectory);
+
                 throw;
             }
 
@@ -43,6 +52,7 @@ namespace DiscussionBoard.Services
                 try
                 {
                     stream = GetFileStream(logFile);
+
                     if (stream == null)
                     {
                         continue;
@@ -50,7 +60,11 @@ namespace DiscussionBoard.Services
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Could not read log file {LogFile}", logFile);
+                    _logger.LogError(
+                        e,
+                        "Could not read log file {LogFile}",
+                        logFile);
+
                     continue;
                 }
 
@@ -62,7 +76,10 @@ namespace DiscussionBoard.Services
                 }
                 catch (IOException e)
                 {
-                    _logger.LogError(e, "Could not read log entry in file {LogFile}", logFile);
+                    _logger.LogError(
+                        e,
+                        "Could not read log entry in file {LogFile}",
+                        logFile);
                 }
             }
 
@@ -75,7 +92,7 @@ namespace DiscussionBoard.Services
 
             try
             {
-                stream = new(
+                stream = new FileStream(
                     logFile,
                     FileMode.Open,
                     FileAccess.Read,
@@ -83,26 +100,38 @@ namespace DiscussionBoard.Services
             }
             catch (IOException e)
             {
-                _logger.LogError(e, "Could not read log file {LogFile}", logFile);
+                _logger.LogError(
+                    e,
+                    "Could not read log file {LogFile}",
+                    logFile);
+
                 throw;
             }
 
             return stream;
         }
 
-        private void LoadLogs(StreamReader reader, string logFile, List<LogEntry> logs)
+        private void LoadLogs(
+            StreamReader reader,
+            string logFile,
+            List<LogEntry> logs)
         {
             while (reader.ReadLine() is { } line)
             {
                 try
                 {
-                    LogEntry? entry = JsonSerializer.Deserialize<LogEntry>(line);
+                    LogEntry? entry =
+                        JsonSerializer.Deserialize<LogEntry>(line);
+
                     if (entry != null)
                     {
                         logs.Add(entry);
                     }
                 }
-                catch (Exception e) when (e is ArgumentNullException or JsonException or NotSupportedException)
+                catch (Exception e) when (
+                    e is ArgumentNullException
+                    or JsonException
+                    or NotSupportedException)
                 {
                     _logger.LogWarning(
                         e,
